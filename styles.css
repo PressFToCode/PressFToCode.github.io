@@ -1,0 +1,137 @@
+:root {
+  color-scheme: dark;
+  --bg: #10131e;
+  --surface: #1b2030;
+  --surface-light: #252c40;
+  --text: #f9f7ff;
+  --muted: #a7adbf;
+  --accent: #f5b93a;
+  --accent-dark: #d68724;
+  --green: #42cc91;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: radial-gradient(circle at 80% 0%, #2d2544 0, transparent 32%), var(--bg);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button { font: inherit; cursor: pointer; }
+
+.app-shell { width: min(100%, 520px); min-height: 100vh; margin: 0 auto; padding: 24px 18px 28px; }
+
+.topbar, .brand, .balance-card, .game-card { display: flex; align-items: center; }
+.topbar { justify-content: space-between; }
+.brand { gap: 10px; }
+.brand-mark { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 14px; color: #201507; background: linear-gradient(135deg, #ffe68c, var(--accent-dark)); font-size: 24px; }
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: 19px; }
+.eyebrow, .game-label { color: var(--accent); font-size: 11px; font-weight: 800; letter-spacing: .11em; }
+.profile-button, .close-modal { border: 0; color: var(--text); background: var(--surface-light); }
+.profile-button { width: 42px; height: 42px; border-radius: 50%; }
+
+.balance-card { position: relative; flex-wrap: wrap; gap: 4px 8px; margin-top: 28px; padding: 18px; border: 1px solid #3b435d; border-radius: 20px; background: linear-gradient(120deg, #252d44, #1c2132); }
+.balance-card > span:first-child { width: 100%; color: var(--muted); font-size: 13px; }
+.balance-card strong { font-size: 30px; letter-spacing: -.04em; }
+.coins { color: var(--accent); font-weight: 700; }
+.add-coins { margin-left: auto; padding: 8px 11px; border: 1px solid #65708e; border-radius: 10px; color: var(--text); background: transparent; font-size: 13px; font-weight: 700; }
+
+.welcome { margin: 34px 3px 18px; }
+.welcome h2 { margin-top: 6px; font-size: 26px; }
+.welcome p:last-child { max-width: 380px; margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.45; }
+
+.games { display: grid; gap: 12px; }
+.game-card { gap: 14px; min-height: 132px; padding: 16px; border: 1px solid #4a4050; border-radius: 22px; background: linear-gradient(115deg, #39283a, #262238 60%, #202b42); box-shadow: 0 15px 30px rgba(0, 0, 0, .15); }
+.game-icon { display: grid; flex: 0 0 70px; place-items: center; width: 70px; height: 70px; border-radius: 18px; background: rgba(255,255,255,.1); font-size: 38px; }
+.game-info { align-self: stretch; min-width: 0; }
+.game-info h3 { margin: 4px 0; font-size: 21px; }
+.game-info p { color: #d2cad8; font-size: 12px; line-height: 1.35; }
+.play-button, .spin-button { border: 0; color: #241806; background: linear-gradient(135deg, #ffe38a, var(--accent)); font-weight: 800; }
+.play-button { align-self: flex-end; flex: 0 0 auto; padding: 10px 12px; border-radius: 12px; font-size: 13px; }
+.play-button span { margin-left: 3px; font-size: 18px; vertical-align: -1px; }
+.notice { margin-top: 28px; color: #7f879c; text-align: center; font-size: 11px; }
+
+.modal { position: fixed; inset: 0; display: grid; place-items: end center; padding: 18px; visibility: hidden; opacity: 0; background: rgba(5, 7, 13, .7); transition: .2s ease; }
+.modal.open { visibility: visible; opacity: 1; }
+.modal-content { position: relative; width: min(100%, 560px); max-height: calc(100vh - 36px); overflow: auto; padding: 28px 16px 18px; border: 1px solid #4a526a; border-radius: 26px; text-align: center; background: #1b2030; transform: translateY(20px); transition: transform .2s ease; }
+.modal.open .modal-content { transform: translateY(0); }
+.close-modal { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border-radius: 50%; font-size: 23px; line-height: 1; }
+.roulette-heading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 11px; text-align: center; }
+
+/* Outer wooden cabinet rim */
+.roulette-wheel { --pocket-radius: 120px; --ball-track-radius: 148px; position: relative; display: grid; flex: 0 0 auto; place-items: center; width: 336px; height: 336px; overflow: visible; border-radius: 50%; background:
+    repeating-conic-gradient(from 0deg, #7a4a1c 0deg 2deg, #915b26 2deg 4deg),
+    radial-gradient(circle at 32% 26%, #8a5a26, #4a2f10 55%, #2a1a09 78%);
+  box-shadow: inset 0 0 0 3px #d9ac52, inset 0 0 0 6px #5c3812, 0 30px 0 -6px #3d2409, 0 40px 18px -6px rgba(0,0,0,.4), 0 55px 45px rgba(0,0,0,.65);
+  transform: perspective(820px) rotateX(48deg); transform-origin: center 62%; }
+
+/* Brass ring separating cabinet from the ball track */
+.roulette-wheel::before { content: ''; position: absolute; z-index: 1; inset: 20px; border-radius: 50%; background: conic-gradient(from 0deg, #f6d98a, #a9762b 12%, #f6d98a 25%, #8a5c1e 38%, #f6d98a 50%, #a9762b 62%, #f6d98a 75%, #8a5c1e 88%, #f6d98a 100%); box-shadow: inset 0 3px 6px rgba(255,255,255,.35), inset 0 -6px 10px rgba(0,0,0,.55), 0 1px 0 rgba(255,255,255,.25); pointer-events: none; }
+
+/* Stationary ball track (grooved bowl the ball orbits before dropping) */
+.roulette-wheel::after { content: ''; position: absolute; z-index: 2; inset: 26px; border-radius: 50%; background: radial-gradient(circle, transparent 0 70%, #1c1108 71% 100%); box-shadow: inset 0 0 16px 4px rgba(0,0,0,.75), inset 0 2px 3px rgba(255,255,255,.12); pointer-events: none; }
+
+.wheel-track { position: absolute; z-index: 3; inset: 34px; border: 4px solid #b98429; border-radius: 50%; background: #150d06; box-shadow: inset 0 0 14px rgba(0,0,0,.85), inset 0 3px 4px rgba(255,255,255,.08), 0 3px 0 #4a2c09; transition: transform 4.9s cubic-bezier(.12,.78,.17,1); }
+
+/* Metal frets between every pocket */
+.wheel-track::before { content: ''; position: absolute; z-index: 1; inset: 0; border-radius: 50%; pointer-events: none; background: repeating-conic-gradient(from calc(-360deg/37/2), transparent 0deg calc(360deg/37 - 1.1deg), rgba(233,210,150,.85) calc(360deg/37 - 1.1deg) calc(360deg/37)); mask: radial-gradient(circle, transparent 0 55%, #000 56% 100%); -webkit-mask: radial-gradient(circle, transparent 0 55%, #000 56% 100%); }
+
+.wheel-pocket { --pw: 19px; --ph: 30px; position: absolute; top: 50%; left: 50%; display: grid; place-items: center; width: var(--pw); height: var(--ph); margin: calc(-1 * var(--ph) / 2) 0 0 calc(-1 * var(--pw) / 2); padding-top: 3px; clip-path: polygon(0% 0%, 100% 0%, 80% 100%, 20% 100%); color: #fff; font-size: 10px; font-weight: 900; line-height: 1; text-shadow: 0 1px 2px #000; box-shadow: inset 0 3px 3px rgba(255,255,255,.22), inset 0 -5px 5px rgba(0,0,0,.45); transform: rotate(var(--angle)) translateY(calc(-1 * var(--pocket-radius))); }
+.wheel-pocket.red { background: linear-gradient(180deg, #c23c46, #8f1f28); }
+.wheel-pocket.black { background: linear-gradient(180deg, #2b2f3e, #101219); }
+.wheel-pocket.green { background: linear-gradient(180deg, #2d9161, #175c39); }
+
+.inner-bowl { position: absolute; z-index: 4; width: 168px; height: 168px; border: 8px solid #c99633; border-radius: 50%; background: radial-gradient(circle at 35% 28%, #b3813a, #5c3a17 52%, #23150a 70%); box-shadow: inset 0 9px 15px rgba(255,255,255,.22), inset 0 -16px 20px rgba(0,0,0,.55), 0 8px 0 #34200a, 0 14px 14px rgba(0,0,0,.6); }
+.inner-bowl::after { content: ''; position: absolute; inset: 14px; border: 4px solid #8a5c1e; border-radius: 50%; box-shadow: inset 0 0 12px #120a02; background: radial-gradient(circle at 38% 30%, rgba(255,255,255,.06), transparent 55%); }
+.wheel-center { position: relative; z-index: 5; display: grid; place-items: center; width: 78px; height: 78px; border: 6px solid #e9c257; border-radius: 50%; color: #ffe596; background: radial-gradient(circle at 35% 30%, #a9782f, #422a0f 58%, #170e05); box-shadow: inset 0 4px 8px rgba(255,255,255,.25), inset 0 -6px 10px rgba(0,0,0,.4), 0 6px 5px #150d04; font-size: 32px; }
+
+/* Ball: position (rotate + translateY) is set every frame by JS in app.js, spiralling
+   from the outer track down onto the pocket ring as it decelerates. */
+.roulette-ball { position: absolute; z-index: 6; top: 50%; left: 50%; width: 14px; height: 14px; margin: -7px; border: 1px solid #fff; border-radius: 50%; background: radial-gradient(circle at 32% 27%, #fff, #e1e4e7 27%, #818894 62%, #333944); box-shadow: 0 2px 5px rgba(0,0,0,.7); }
+.roulette-wheel.spinning .roulette-ball { box-shadow: 0 0 8px 2px rgba(255,255,255,.65); }
+.roulette-ball.dropping { box-shadow: 0 0 10px 3px rgba(255,255,255,.55), 0 3px 6px rgba(0,0,0,.8); }
+.modal h2 { margin: 5px 0 8px; font-size: 28px; }
+.roulette-result { min-height: 22px; margin: 12px 0; color: var(--muted); font-size: 13px; }
+.bet-panel { margin: 0 0 13px; padding: 12px; border: 1px solid #3d475f; border-radius: 14px; text-align: left; background: #202638; }
+.bet-panel label { display: block; margin-bottom: 6px; font-size: 13px; font-weight: 700; }
+.bet-input-row { display: flex; gap: 8px; }
+.bet-input-row input { width: 100%; min-width: 0; padding: 10px 12px; border: 1px solid #56617d; border-radius: 10px; outline: none; color: var(--text); background: #131827; font-size: 16px; font-weight: 700; }
+.bet-input-row input:focus { border-color: var(--accent); }
+.bet-input-row button { border: 0; border-radius: 10px; padding: 0 12px; color: #211706; background: var(--accent); font-size: 13px; font-weight: 800; }
+.bet-panel small { display: block; margin-top: 7px; color: var(--muted); font-size: 11px; }
+.selected-bet { margin: 10px 0 0; color: var(--muted); font-size: 12px; }
+.selected-bet strong { color: var(--accent); }
+.roulette-table { display: grid; grid-template-columns: 42px 1fr 44px; grid-template-rows: auto auto auto; gap: 3px; padding: 5px; border-radius: 12px; background: #86662b; }
+.roulette-table button { min-height: 32px; border: 1px solid rgba(255,255,255,.28); color: #fff; background: #254d38; font-size: 11px; font-weight: 800; }
+.roulette-table button:hover, .roulette-table button.selected { outline: 2px solid var(--accent); outline-offset: -2px; filter: brightness(1.2); }
+.roulette-table .number { border-radius: 4px; }
+.zero { grid-row: 1; }
+.number-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 2px; }
+.number-grid .number { min-width: 0; padding: 2px 0; }
+.number-grid .red { background: #a62e39; }.number-grid .black { background: #202330; }.roulette-table .green { background: #227245; }
+.column-bets { display: grid; gap: 2px; }.column-bets button { min-height: 0; }.dozen-bets { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }.outside-bets { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(6, 1fr); gap: 3px; }.roulette-table .red-bet { background: #a62e39; }.roulette-table .black-bet { background: #202330; }
+.spin-button { width: 100%; padding: 14px; border-radius: 13px; }
+.spin-button:disabled { cursor: wait; opacity: .65; }
+
+@media (max-width: 390px) {
+  .game-card { gap: 10px; padding: 13px; }
+  .game-icon { flex-basis: 58px; width: 58px; height: 58px; font-size: 30px; }
+  .play-button { padding: 9px; }
+  .roulette-table { grid-template-columns: 34px 1fr 39px; }
+  .roulette-table button { min-height: 30px; font-size: 9px; }
+  .outside-bets { font-size: 8px; }
+  .roulette-wheel { --pocket-radius: 104px; --ball-track-radius: 128px; width: 288px; height: 288px; }
+  .roulette-wheel::before { inset: 17px; }
+  .roulette-wheel::after { inset: 22px; }
+  .wheel-track { inset: 29px; }
+  .wheel-pocket { --pw: 16px; --ph: 26px; font-size: 9px; }
+  .inner-bowl { width: 142px; height: 142px; border-width: 7px; }
+  .inner-bowl::after { inset: 12px; }
+  .wheel-center { width: 66px; height: 66px; font-size: 27px; }
+  .roulette-ball { width: 12px; height: 12px; margin: -6px; }
+}

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#121522" />
+    <title>Lucky Spin — демо-казино</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark">✦</span>
+          <div>
+            <p class="eyebrow">ДЕМО-КАЗИНО</p>
+            <h1>MBB лудка</h1>
+          </div>
+        </div>
+        <button class="profile-button" type="button" aria-label="Профиль">👤</button>
+      </header>
+
+      <section class="balance-card" aria-label="Игровой баланс">
+        <span>Ваш игровой баланс</span>
+        <strong id="balance">1 000</strong>
+        <span class="coins">фишек</span>
+        <button class="add-coins" id="addCoins" type="button">+ 500</button>
+      </section>
+
+      <section class="welcome">
+        <p class="eyebrow">ГЛАВНОЕ МЕНЮ</p>
+        <h2>Выберите игру</h2>
+        <p>Играйте только ради удовольствия — здесь нет настоящих ставок или денег.</p>
+      </section>
+
+      <section class="games" aria-label="Список игр">
+        <article class="game-card roulette-card">
+          <div class="game-icon" aria-hidden="true">🎡</div>
+          <div class="game-info">
+            <span class="game-label">КЛАССИКА</span>
+            <h3>Рулетка</h3>
+            <p>Испытайте удачу и сорвите джекпот из фишек.</p>
+          </div>
+          <button class="play-button" id="openRoulette" type="button">Играть <span>→</span></button>
+        </article>
+      </section>
+
+      <p class="notice">18+ · Виртуальные фишки · Только для развлечения</p>
+    </main>
+
+    <div class="modal" id="rouletteModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="rouletteTitle">
+      <div class="modal-content roulette-modal-content">
+        <button class="close-modal" id="closeRoulette" type="button" aria-label="Закрыть">×</button>
+        <div class="roulette-heading">
+          <div class="roulette-wheel" id="rouletteWheel" aria-label="Колесо европейской рулетки">
+            <div class="wheel-track" id="wheelTrack"></div>
+            <div class="inner-bowl" aria-hidden="true"></div>
+            <div class="wheel-center">✦</div>
+            <div class="roulette-ball" id="rouletteBall" aria-hidden="true"></div>
+          </div>
+          <div><p class="eyebrow">ЕВРОПЕЙСКАЯ РУЛЕТКА</p><h2 id="rouletteTitle">Сделайте ставку</h2></div>
+        </div>
+        <p class="roulette-result" id="rouletteResult" role="status">Выберите поле, укажите сумму и крутите колесо.</p>
+
+        <section class="bet-panel" aria-label="Параметры ставки">
+          <label for="betInput">Ставка, фишек</label>
+          <div class="bet-input-row"><input id="betInput" type="text" inputmode="numeric" autocomplete="off" value="50" maxlength="6" aria-describedby="betHint" /><button id="maxBet" type="button">Макс.</button></div>
+          <small id="betHint">Только целое положительное число, не больше баланса.</small>
+          <p class="selected-bet">Выбрано: <strong id="selectedBet">—</strong></p>
+        </section>
+
+        <section class="roulette-table" aria-label="Игровое поле рулетки">
+          <button class="zero number green" type="button" data-type="number" data-value="0">0</button>
+          <div class="number-grid" id="numberGrid"></div>
+          <div class="column-bets">
+            <button type="button" data-type="column" data-value="1">2 к 1</button>
+            <button type="button" data-type="column" data-value="2">2 к 1</button>
+            <button type="button" data-type="column" data-value="3">2 к 1</button>
+          </div>
+          <div class="dozen-bets">
+            <button type="button" data-type="dozen" data-value="1">1–12</button>
+            <button type="button" data-type="dozen" data-value="2">13–24</button>
+            <button type="button" data-type="dozen" data-value="3">25–36</button>
+          </div>
+          <div class="outside-bets">
+            <button type="button" data-type="low">1–18</button>
+            <button type="button" data-type="even">Чёт</button>
+            <button class="red-bet" type="button" data-type="color" data-value="red">Красное</button>
+            <button class="black-bet" type="button" data-type="color" data-value="black">Чёрное</button>
+            <button type="button" data-type="odd">Нечёт</button>
+            <button type="button" data-type="high">19–36</button>
+          </div>
+        </section>
+        <button class="spin-button" id="spinButton" type="button" disabled>Сначала выберите поле</button>
+      </div>
+    </div>
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
