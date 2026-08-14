@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#121522" />
     <title>Lucky Spin — демо-казино</title>
-    <link rel="stylesheet" href="styles.css?v=6" />
+    <link rel="stylesheet" href="styles.css?v=7" />
   </head>
   <body>
     <main class="app-shell">
@@ -42,6 +42,16 @@
             <p>Испытайте удачу и сорвите джекпот из фишек.</p>
           </div>
           <button class="play-button" id="openRoulette" type="button">Играть <span>→</span></button>
+        </article>
+
+        <article class="game-card slot-card">
+          <div class="game-icon" aria-hidden="true">🎰</div>
+          <div class="game-info">
+            <span class="game-label">АВТОМАТ</span>
+            <h3>Однорукий бандит</h3>
+            <p>Крутите барабаны и ловите выигрышные комбинации.</p>
+          </div>
+          <button class="play-button" id="openSlot" type="button">Играть <span>→</span></button>
         </article>
       </section>
 
@@ -96,7 +106,47 @@
       </div>
     </div>
 
+    <div class="modal" id="slotModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="slotTitle">
+      <div class="modal-content slot-modal-content">
+        <button class="close-modal" id="closeSlot" type="button" aria-label="Закрыть">×</button>
+        <div class="slot-heading">
+          <p class="eyebrow">ОДНОРУКИЙ БАНДИТ</p>
+          <h2 id="slotTitle">Крутите барабаны</h2>
+        </div>
+        <p class="modal-balance">Баланс: <strong id="slotModalBalance">1 000</strong> фишек</p>
+        <p class="roulette-result" id="slotResult" role="status">Сделайте ставку и крутите барабаны.</p>
+
+        <div class="slot-cabinet">
+          <div class="slot-window">
+            <div class="slot-reel" id="reel-0"><div class="slot-strip" id="strip-0"></div></div>
+            <div class="slot-reel" id="reel-1"><div class="slot-strip" id="strip-1"></div></div>
+            <div class="slot-reel" id="reel-2"><div class="slot-strip" id="strip-2"></div></div>
+            <div class="payline" aria-hidden="true"></div>
+          </div>
+        </div>
+
+        <section class="bet-panel" aria-label="Параметры ставки">
+          <label for="slotBetInput">Ставка, фишек</label>
+          <div class="bet-input-row"><input id="slotBetInput" type="text" inputmode="numeric" autocomplete="off" value="50" maxlength="6" aria-describedby="slotBetHint" /><button id="slotMaxBet" type="button">Макс.</button></div>
+          <small id="slotBetHint">Только целое положительное число, не больше баланса.</small>
+        </section>
+
+        <ul class="paytable" aria-label="Таблица выплат">
+          <li><span>7️⃣7️⃣7️⃣</span><b>×50</b></li>
+          <li><span>💎💎💎</span><b>×25</b></li>
+          <li><span>🔔🔔🔔</span><b>×15</b></li>
+          <li><span>🍇🍇🍇</span><b>×10</b></li>
+          <li><span>🍊🍊🍊</span><b>×8</b></li>
+          <li><span>🍋🍋🍋</span><b>×6</b></li>
+          <li><span>🍒🍒🍒</span><b>×4</b></li>
+          <li><span>🍒🍒 + любое</span><b>×3</b></li>
+        </ul>
+
+        <button class="spin-button" id="slotSpinButton" type="button">🎰 Крутить барабаны</button>
+      </div>
+    </div>
+
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="app.js?v=6"></script>
+    <script src="app.js?v=7"></script>
   </body>
 </html>

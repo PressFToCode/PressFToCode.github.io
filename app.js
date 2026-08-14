@@ -18,6 +18,113 @@ const spinButton = document.querySelector('#spinButton');
 const betInput = document.querySelector('#betInput');
 const selectedBet = document.querySelector('#selectedBet');
 const numberGrid = document.querySelector('#numberGrid');
+const slotModal = document.querySelector('#slotModal');
+const slotModalBalanceElement = document.querySelector('#slotModalBalance');
+const slotResult = document.querySelector('#slotResult');
+const slotBetInput = document.querySelector('#slotBetInput');
+const slotSpinButton = document.querySelector('#slotSpinButton');
+const slotStrips = [document.querySelector('#strip-0'), document.querySelector('#strip-1'), document.querySelector('#strip-2')];
+let isSlotSpinning = false;
+
+const slotSymbols = [
+  { emoji: '🍒', weight: 30, multiplier: 4 },
+  { emoji: '🍋', weight: 25, multiplier: 6 },
+  { emoji: '🍊', weight: 20, multiplier: 8 },
+  { emoji: '🍇', weight: 15, multiplier: 10 },
+  { emoji: '🔔', weight: 7, multiplier: 15 },
+  { emoji: '💎', weight: 2, multiplier: 25 },
+  { emoji: '7️⃣', weight: 1, multiplier: 50 },
+];
+const slotWeightTotal = slotSymbols.reduce((sum, symbol) => sum + symbol.weight, 0);
+
+function pickSlotSymbol() {
+  let roll = Math.random() * slotWeightTotal;
+  for (const symbol of slotSymbols) {
+    if (roll < symbol.weight) return symbol;
+    roll -= symbol.weight;
+  }
+  return slotSymbols[0];
+}
+
+function slotPayout(symbols) {
+  const [a, b, c] = symbols;
+  if (a.emoji === b.emoji && b.emoji === c.emoji) return a.multiplier;
+  if (symbols.filter((symbol) => symbol.emoji === '🍒').length === 2) return 3;
+  return 0;
+}
+
+function buildReelStrip(stripEl, finalSymbol, extraSpins = 22) {
+  stripEl.innerHTML = '';
+  stripEl.style.transform = 'translateY(0)';
+  for (let i = 0; i < extraSpins; i += 1) {
+    const cell = document.createElement('div');
+    cell.className = 'slot-cell';
+    cell.textContent = pickSlotSymbol().emoji;
+    stripEl.append(cell);
+  }
+  const finalCell = document.createElement('div');
+  finalCell.className = 'slot-cell';
+  finalCell.textContent = finalSymbol.emoji;
+  stripEl.append(finalCell);
+  return extraSpins;
+}
+
+function animateReel(stripEl, cellCount, duration) {
+  const cellHeight = stripEl.firstElementChild.getBoundingClientRect().height;
+  const target = cellCount * cellHeight;
+  return new Promise((resolve) => {
+    const start = performance.now();
+    function frame(now) {
+      const t = Math.min(1, (now - start) / duration);
+      stripEl.style.transform = `translateY(${-target * easeOutQuint(t)}px)`;
+      if (t < 1) requestAnimationFrame(frame);
+      else resolve();
+    }
+    requestAnimationFrame(frame);
+  });
+}
+
+function resetSlotReels() {
+  slotStrips.forEach((strip) => buildReelStrip(strip, pickSlotSymbol(), 0));
+}
+
+function validateSlotBet(showMessage = false) {
+  const raw = slotBetInput.value.trim();
+  const valid = /^\d+$/.test(raw) && Number.isSafeInteger(Number(raw)) && Number(raw) > 0 && Number(raw) <= balance;
+  slotBetInput.setAttribute('aria-invalid', String(!valid));
+  slotSpinButton.disabled = !valid || isSlotSpinning;
+  if (!valid && showMessage) slotResult.textContent = raw === '' || !/^\d+$/.test(raw) || Number(raw) <= 0 ? 'Введите целое положительное число фишек.' : 'Ставка не может быть больше игрового баланса.';
+  return valid;
+}
+
+async function spinSlot() {
+  if (isSlotSpinning || !validateSlotBet(true)) return;
+  const bet = Number(slotBetInput.value);
+  isSlotSpinning = true;
+  balance -= bet;
+  renderBalance();
+  slotSpinButton.disabled = true;
+  slotResult.textContent = 'Барабаны крутятся…';
+  const finalSymbols = [pickSlotSymbol(), pickSlotSymbol(), pickSlotSymbol()];
+  const durations = [1500, 1850, 2200];
+  const spins = slotStrips.map((strip, index) => {
+    const cellCount = buildReelStrip(strip, finalSymbols[index]);
+    return animateReel(strip, cellCount, durations[index]);
+  });
+  await Promise.all(spins);
+  const multiplier = slotPayout(finalSymbols);
+  const combo = finalSymbols.map((symbol) => symbol.emoji).join(' ');
+  if (multiplier) {
+    const prize = bet * multiplier;
+    balance += prize;
+    slotResult.textContent = `${combo} — выигрыш ×${multiplier}! Вы получили ${prize} фишек.`;
+  } else {
+    slotResult.textContent = `${combo} — увы, не повезло.`;
+  }
+  renderBalance();
+  isSlotSpinning = false;
+  validateSlotBet();
+}
 const europeanOrder = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 30, 8, 23, 10, 5, 24, 16, 33, 1, 20, 14, 31, 9, 22, 18, 29, 7, 28, 12, 35, 3, 26];
 let wheelRotation = 0;
 let ballAnimationFrame = null;
@@ -26,6 +133,7 @@ function renderBalance() {
   const formatted = balance.toLocaleString('ru-RU');
   balanceElement.textContent = formatted;
   modalBalanceElement.textContent = formatted;
+  slotModalBalanceElement.textContent = formatted;
 }
 
 function wheelMetrics() {
@@ -196,14 +304,25 @@ for (let row = 3; row >= 1; row -= 1) {
 
 buildWheel();
 setBallTransform(0, wheelMetrics().outerRadius);
+resetSlotReels();
 
 document.querySelector('#openRoulette').addEventListener('click', () => { modal.classList.add('open'); modal.setAttribute('aria-hidden', 'false'); });
 document.querySelector('#closeRoulette').addEventListener('click', () => { if (!isSpinning) { modal.classList.remove('open'); modal.setAttribute('aria-hidden', 'true'); } });
-document.querySelector('#addCoins').addEventListener('click', () => { balance += 500; renderBalance(); validateBet(); });
+document.querySelector('#addCoins').addEventListener('click', () => { balance += 500; renderBalance(); validateBet(); validateSlotBet(); });
 document.querySelector('#maxBet').addEventListener('click', () => { betInput.value = balance; validateBet(); });
 betInput.addEventListener('input', () => validateBet());
 betInput.addEventListener('blur', () => validateBet(true));
 document.querySelectorAll('.roulette-table').forEach((table) => table.addEventListener('click', (event) => { const button = event.target.closest('button[data-type]'); if (button && !isSpinning) selectField(button); }));
 spinButton.addEventListener('click', spin);
 modal.addEventListener('click', (event) => { if (event.target === modal && !isSpinning) modal.classList.remove('open'); });
+
+document.querySelector('#openSlot').addEventListener('click', () => { slotModal.classList.add('open'); slotModal.setAttribute('aria-hidden', 'false'); });
+document.querySelector('#closeSlot').addEventListener('click', () => { if (!isSlotSpinning) { slotModal.classList.remove('open'); slotModal.setAttribute('aria-hidden', 'true'); } });
+document.querySelector('#slotMaxBet').addEventListener('click', () => { slotBetInput.value = balance; validateSlotBet(); });
+slotBetInput.addEventListener('input', () => validateSlotBet());
+slotBetInput.addEventListener('blur', () => validateSlotBet(true));
+slotSpinButton.addEventListener('click', spinSlot);
+slotModal.addEventListener('click', (event) => { if (event.target === slotModal && !isSlotSpinning) slotModal.classList.remove('open'); });
+
 renderBalance();
+validateSlotBet();
