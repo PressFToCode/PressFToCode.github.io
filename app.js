@@ -8,6 +8,7 @@ let selected = null;
 let isSpinning = false;
 
 const balanceElement = document.querySelector('#balance');
+const modalBalanceElement = document.querySelector('#modalBalance');
 const modal = document.querySelector('#rouletteModal');
 const result = document.querySelector('#rouletteResult');
 const wheel = document.querySelector('#rouletteWheel');
@@ -21,7 +22,11 @@ const europeanOrder = [0, 32, 15, 19, 4, 21, 2, 25, 17, 34, 6, 27, 13, 36, 11, 3
 let wheelRotation = 0;
 let ballAnimationFrame = null;
 
-function renderBalance() { balanceElement.textContent = balance.toLocaleString('ru-RU'); }
+function renderBalance() {
+  const formatted = balance.toLocaleString('ru-RU');
+  balanceElement.textContent = formatted;
+  modalBalanceElement.textContent = formatted;
+}
 
 function wheelMetrics() {
   const styles = getComputedStyle(wheel);
@@ -85,10 +90,37 @@ function betLabel(type, value) {
   return labels[type];
 }
 
+function numbersForBet(type, value) {
+  const numbers = [];
+  for (let number = 0; number <= 36; number += 1) {
+    if (type === 'number') { if (number === Number(value)) numbers.push(number); continue; }
+    if (number === 0) continue;
+    if (type === 'color' && (value === 'red') === redNumbers.has(number)) numbers.push(number);
+    else if (type === 'even' && number % 2 === 0) numbers.push(number);
+    else if (type === 'odd' && number % 2 === 1) numbers.push(number);
+    else if (type === 'low' && number <= 18) numbers.push(number);
+    else if (type === 'high' && number >= 19) numbers.push(number);
+    else if (type === 'dozen' && Math.floor((number - 1) / 12) + 1 === Number(value)) numbers.push(number);
+    else if (type === 'column' && ((number - 1) % 3) + 1 === Number(value)) numbers.push(number);
+  }
+  return numbers;
+}
+
+function highlightSelection() {
+  document.querySelectorAll('.wheel-pocket.covered').forEach((item) => item.classList.remove('covered'));
+  if (!selected) return;
+  const numbers = numbersForBet(selected.type, selected.value);
+  numbers.forEach((number) => {
+    const pocket = wheelTrack.querySelector(`.wheel-pocket[data-number="${number}"]`);
+    if (pocket) pocket.classList.add('covered');
+  });
+}
+
 function selectField(button) {
   selected = { type: button.dataset.type, value: button.dataset.value };
   document.querySelectorAll('.roulette-table button').forEach((item) => item.classList.remove('selected'));
   button.classList.add('selected');
+  highlightSelection();
   selectedBet.textContent = betLabel(selected.type, selected.value);
   result.textContent = 'Ставка готова. Крутите колесо!';
   validateBet();
@@ -112,6 +144,7 @@ function buildWheel() {
     const pocket = document.createElement('span');
     const color = number === 0 ? 'green' : redNumbers.has(number) ? 'red' : 'black';
     pocket.className = `wheel-pocket ${color}`;
+    pocket.dataset.number = number;
     pocket.style.setProperty('--angle', `${index * (360 / europeanOrder.length)}deg`);
     pocket.textContent = number;
     wheelTrack.append(pocket);
